@@ -7,7 +7,7 @@ import {
   onAuthStateChanged,
 } from "firebase/auth";
 import { getMessaging, getToken, onMessage } from "firebase/messaging";
-import { app, swRegistration } from "./firebase";
+import { app } from "./firebase";
 import { useEffect, useState } from "react";
 
 function App() {
@@ -40,9 +40,9 @@ function App() {
         setName(user.displayName);
 
         // 알림 토큰 저장
-        swRegistration();
         console.log(messaging);
         getToken(messaging, {
+          serviceWorkerRegistration:"/firebase-message-sw.js"
           vapidKey:
             "BLnmZ7MoMERjyVHv4b791C7j1_-xqcVi9aCrVWDDFovZSGDgK9FROae3J8Q7AWqTJwbQDc2Dk4LrU0zAEUVqfVQ",
         })
