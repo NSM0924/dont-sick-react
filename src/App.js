@@ -41,7 +41,7 @@ function App() {
 
         // 알림 토큰 저장
         const serviceWorkerRegistration = navigator.serviceWorker.register(
-          "/dont-sick-react/firebase-messaging-service-worker.js"
+          "/dont-sick-react/firebase-messaging-sw.js"
         );
         getToken(messaging, {
           serviceWorkerRegistration,
