@@ -1,4 +1,5 @@
 // Import the functions you need from the SDKs you need
+import { getMessaging } from "@firebase/messaging";
 import { initializeApp } from "firebase/app";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -26,13 +27,12 @@ const swRegistration = async () => {
 // Initialize Firebase
 export const app = initializeApp(firebaseConfig);
 export const setUpMessage = () => {
-  const messaging = firebase.messaging();
-  messaging
-    .getToken({
-      serviceWorkerRegistration: swRegistration,
-      vapidKey:
-        "BLnmZ7MoMERjyVHv4b791C7j1_-xqcVi9aCrVWDDFovZSGDgK9FROae3J8Q7AWqTJwbQDc2Dk4LrU0zAEUVqfVQ",
-    })
+  const messaging = getMessaging();
+  getToken({
+    serviceWorkerRegistration: swRegistration,
+    vapidKey:
+      "BLnmZ7MoMERjyVHv4b791C7j1_-xqcVi9aCrVWDDFovZSGDgK9FROae3J8Q7AWqTJwbQDc2Dk4LrU0zAEUVqfVQ",
+  })
     .then((currentToken) => {
       if (currentToken) {
         console.log(currentToken);
