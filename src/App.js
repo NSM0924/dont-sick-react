@@ -38,19 +38,22 @@ function App() {
           setNumber(`1${email.substr(5, 4)}`);
         }
         setName(user.displayName);
-        messaging
-        .requestPermission()
-        .then(function () {
+        messaging.requestPermission().then(function () {
           console.log("Have permission");
-          if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('../public/firebase-messaging-sw.js')
-            .then(function(registration) {
-                console.log('Registration successful, scope is:', registration.scope);
-            }).catch(function(err) {
-                console.log('Service worker registration failed, error:', err);
-            });
-        }
-      }
+          if ("serviceWorker" in navigator) {
+            navigator.serviceWorker
+              .register("../public/firebase-messaging-sw.js")
+              .then(function (registration) {
+                console.log(
+                  "Registration successful, scope is:",
+                  registration.scope
+                );
+              })
+              .catch(function (err) {
+                console.log("Service worker registration failed, error:", err);
+              });
+          }
+        });
 
         // 알림 토큰 저장
         getToken(messaging, {
