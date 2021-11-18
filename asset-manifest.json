@@ -11,7 +11,8 @@
     "static/js/3.20ad9183.chunk.js.map": "/dont-sick-react/static/js/3.20ad9183.chunk.js.map",
     "index.html": "/dont-sick-react/index.html",
     "static/css/main.8c8b27cf.chunk.css.map": "/dont-sick-react/static/css/main.8c8b27cf.chunk.css.map",
-    "static/js/2.f8eca2ee.chunk.js.LICENSE.txt": "/dont-sick-react/static/js/2.f8eca2ee.chunk.js.LICENSE.txt"
+    "static/js/2.f8eca2ee.chunk.js.LICENSE.txt": "/dont-sick-react/static/js/2.f8eca2ee.chunk.js.LICENSE.txt",
+    "firebase-messaging-sw.js": "/dont-sick-react/firebase-messaging-sw.js"
   },
   "entrypoints": [
     "static/js/runtime-main.8317c03c.js",
