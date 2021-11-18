@@ -1,5 +1,5 @@
 // Import the functions you need from the SDKs you need
-import { getMessaging } from "@firebase/messaging";
+import { getMessaging, getToken } from "@firebase/messaging";
 import { initializeApp } from "firebase/app";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
