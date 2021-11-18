@@ -50,6 +50,7 @@ function App() {
                 console.log('Service worker registration failed, error:', err);
             });
         }
+      }
 
         // 알림 토큰 저장
         getToken(messaging, {
