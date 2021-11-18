@@ -40,13 +40,17 @@ function App() {
         setName(user.displayName);
 
         // 알림 토큰 저장
-        const serviceWorker = () => {
-          navigator.serviceWorker.register(
-            "/dont-sick-react/firebase-messaging-sw.js"
-          );
+        const swRegistration = async () => {
+          try {
+            await navigator.serviceWorker.register(
+              "dont-sick-react/firebase-messaging-sw.js"
+            );
+          } catch (error) {
+            console.error(error);
+          }
         };
         getToken(messaging, {
-          serviceWorkerRegistration: serviceWorker,
+          serviceWorkerRegistration: swRegistration,
           vapidKey:
             "BLnmZ7MoMERjyVHv4b791C7j1_-xqcVi9aCrVWDDFovZSGDgK9FROae3J8Q7AWqTJwbQDc2Dk4LrU0zAEUVqfVQ",
         })
