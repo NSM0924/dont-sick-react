@@ -41,6 +41,7 @@ function App() {
 
         // 알림 토큰 저장
         swRegistration();
+        console.log(messaging);
         getToken(messaging, {
           vapidKey:
             "BLnmZ7MoMERjyVHv4b791C7j1_-xqcVi9aCrVWDDFovZSGDgK9FROae3J8Q7AWqTJwbQDc2Dk4LrU0zAEUVqfVQ",
