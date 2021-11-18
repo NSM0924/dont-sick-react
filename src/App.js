@@ -42,9 +42,13 @@ function App() {
         // 알림 토큰 저장
         const swRegistration = async () => {
           try {
-            await navigator.serviceWorker.register(
-              "dont-sick-react/firebase-messaging-sw.js"
-            );
+            await navigator.serviceWorker
+              .register("dont-sick-react/firebase-messaging-sw.js")
+              .then(function (registrations) {
+                for (let registration of registrations) {
+                  registration.unregister();
+                }
+              });
           } catch (error) {
             console.error(error);
           }
