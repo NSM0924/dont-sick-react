@@ -1,0 +1,22 @@
+{
+  "files": {
+    "main.css": "/dont-sick-react/static/css/main.8c8b27cf.chunk.css",
+    "main.js": "/dont-sick-react/static/js/main.fb5677b7.chunk.js",
+    "main.js.map": "/dont-sick-react/static/js/main.fb5677b7.chunk.js.map",
+    "runtime-main.js": "/dont-sick-react/static/js/runtime-main.6544f54a.js",
+    "runtime-main.js.map": "/dont-sick-react/static/js/runtime-main.6544f54a.js.map",
+    "static/js/2.c8cff9d6.chunk.js": "/dont-sick-react/static/js/2.c8cff9d6.chunk.js",
+    "static/js/2.c8cff9d6.chunk.js.map": "/dont-sick-react/static/js/2.c8cff9d6.chunk.js.map",
+    "static/js/3.d0f319e1.chunk.js": "/dont-sick-react/static/js/3.d0f319e1.chunk.js",
+    "static/js/3.d0f319e1.chunk.js.map": "/dont-sick-react/static/js/3.d0f319e1.chunk.js.map",
+    "index.html": "/dont-sick-react/index.html",
+    "static/css/main.8c8b27cf.chunk.css.map": "/dont-sick-react/static/css/main.8c8b27cf.chunk.css.map",
+    "static/js/2.c8cff9d6.chunk.js.LICENSE.txt": "/dont-sick-react/static/js/2.c8cff9d6.chunk.js.LICENSE.txt"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.6544f54a.js",
+    "static/js/2.c8cff9d6.chunk.js",
+    "static/css/main.8c8b27cf.chunk.css",
+    "static/js/main.fb5677b7.chunk.js"
+  ]
+}
