@@ -17,7 +17,7 @@ function App() {
   const [name, setName] = useState("");
   const [token, setToken] = useState("");
 
-  useEffect(() => {
+  useEffect(async () => {
     // 로그인한 사용자 가져오기
     onAuthStateChanged(auth, (user) => {
       if (user) {
@@ -44,7 +44,7 @@ function App() {
           await navigator.serviceWorker.register(
             "/dont-sick-react/firebase-messaging-service-worker.js"
           );
-        getToken(messaging, {
+        await getToken(messaging, {
           serviceWorkerRegistration,
           vapidKey:
             "BLnmZ7MoMERjyVHv4b791C7j1_-xqcVi9aCrVWDDFovZSGDgK9FROae3J8Q7AWqTJwbQDc2Dk4LrU0zAEUVqfVQ",
