@@ -50,7 +50,6 @@ function App() {
           }
         };
         getToken(messaging, {
-          serviceWorkerRegistration: swRegistration,
           vapidKey:
             "BLnmZ7MoMERjyVHv4b791C7j1_-xqcVi9aCrVWDDFovZSGDgK9FROae3J8Q7AWqTJwbQDc2Dk4LrU0zAEUVqfVQ",
         })
