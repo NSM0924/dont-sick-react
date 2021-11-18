@@ -53,35 +53,26 @@ function App() {
             console.error(error);
           }
         };
-        if ("serviceWorker" in navigator) {
-          navigator.serviceWorker
-            .register("dont-sick-react/firebase-messaging-sw.js")
-            .then((registration) => {
-              console.log(registration.scope);
-              getToken(messaging, {
-                vapidKey:
-                  "BLnmZ7MoMERjyVHv4b791C7j1_-xqcVi9aCrVWDDFovZSGDgK9FROae3J8Q7AWqTJwbQDc2Dk4LrU0zAEUVqfVQ",
-              })
-                .then((currentToken) => {
-                  if (currentToken) {
-                    console.log(currentToken);
-                    setToken(currentToken);
-                  } else {
-                    console.log(
-                      "No registration token available. Request permission to generate one."
-                    );
-                    alert("알림 권한을 허용해주세요.");
-                  }
-                })
-                .catch((err) => {
-                  console.log(
-                    "An error occurred while retrieving token. ",
-                    err
-                  );
-                  alert("알림 권한을 허용해주세요.");
-                });
-            });
-        }
+        getToken(messaging, {
+          serviceWorkerRegistration: swRegistration,
+          vapidKey:
+            "BLnmZ7MoMERjyVHv4b791C7j1_-xqcVi9aCrVWDDFovZSGDgK9FROae3J8Q7AWqTJwbQDc2Dk4LrU0zAEUVqfVQ",
+        })
+          .then((currentToken) => {
+            if (currentToken) {
+              console.log(currentToken);
+              setToken(currentToken);
+            } else {
+              console.log(
+                "No registration token available. Request permission to generate one."
+              );
+              alert("알림 권한을 허용해주세요.");
+            }
+          })
+          .catch((err) => {
+            console.log("An error occurred while retrieving token. ", err);
+            alert("알림 권한을 허용해주세요.");
+          });
       }
       // 로그인이 안되어있으면 로그인 페이지로 이동
       else {
