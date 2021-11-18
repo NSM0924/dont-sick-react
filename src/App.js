@@ -12,8 +12,7 @@ import { useEffect, useState } from "react";
 
 function App() {
   const auth = getAuth(app);
-  // const messaging = getMessaging();
-  const messaging = firebase.message();
+  const messaging = getMessaging();
   const [number, setNumber] = useState("");
   const [name, setName] = useState("");
   const [token, setToken] = useState("");
