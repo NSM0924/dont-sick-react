@@ -43,7 +43,7 @@ function App() {
         console.log(messaging);
         getToken(messaging, {
           serviceWorkerRegistration: navigator.serviceWorker.register(
-            "/firebase-messaging-sw.js"
+            "/dont-sick-react/firebase-messaging-sw.js"
           ),
           vapidKey:
             "BLnmZ7MoMERjyVHv4b791C7j1_-xqcVi9aCrVWDDFovZSGDgK9FROae3J8Q7AWqTJwbQDc2Dk4LrU0zAEUVqfVQ",
