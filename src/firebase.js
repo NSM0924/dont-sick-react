@@ -17,7 +17,7 @@ const firebaseConfig = {
 export const swRegistration = async () => {
   try {
     await navigator.serviceWorker.register(
-      "/dont-sick-react/firebase-messaging-sw.js"
+      "https://nsm0924.github.io/dont-sick-react/dont-sick-react/firebase-messaging-sw.js"
     );
   } catch (error) {
     console.error(error);
