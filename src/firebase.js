@@ -13,5 +13,36 @@ const firebaseConfig = {
   appId: "1:713607862724:web:5ada0cc3cdaa6370662c91",
 };
 
+const swRegistration = async () => {
+  try {
+    await navigator.serviceWorker.register(
+      "dont-sick-react/firebase-messaging-sw.js"
+    );
+  } catch (error) {
+    console.error(error);
+  }
+};
+
 // Initialize Firebase
 export const app = initializeApp(firebaseConfig);
+export const setUpMessage = () => {
+  const messaging = firebase.messaging();
+  messaging
+    .getToken({
+      serviceWorkerRegistration: swRegistration,
+      vapidKey:
+        "BLnmZ7MoMERjyVHv4b791C7j1_-xqcVi9aCrVWDDFovZSGDgK9FROae3J8Q7AWqTJwbQDc2Dk4LrU0zAEUVqfVQ",
+    })
+    .then((currentToken) => {
+      if (currentToken) {
+        console.log(currentToken);
+      } else {
+        console.log(
+          "No registration token available. Request permission to generate one."
+        );
+      }
+    })
+    .catch((err) => {
+      console.log("An error occurred while retrieving token. ", err);
+    });
+};
