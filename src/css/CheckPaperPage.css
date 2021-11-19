@@ -1,0 +1,19 @@
+ul.mylist {
+  padding: 0;
+}
+ul.mylist li {
+  display: inline-block;
+  padding: 10px;
+  border: 2px solid #ebebeb;
+  border-radius: 5px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: 0.3s;
+  margin: 0 5px 5px;
+}
+
+ul.mylist li:hover {
+  transform: scale(1.1);
+  background-color: #66a8ff;
+  color: #ffffff;
+}

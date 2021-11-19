@@ -7,6 +7,7 @@ import {
   onAuthStateChanged,
 } from "firebase/auth";
 import { getDatabase, onValue, ref, set } from "firebase/database";
+import { collection, getDocs, getFirestore } from "firebase/firestore";
 import { getMessaging, getToken, onMessage } from "firebase/messaging";
 import { app } from "./firebase";
 import { useCallback, useEffect, useState } from "react";
@@ -15,6 +16,8 @@ import { Link } from "react-router-dom";
 import "./css/menu.css";
 import "./css/SettingPage.css";
 import "./css/HomePage.css";
+import "./css/CheckPaperPage.css";
+import "./css/modal.css";
 
 function App() {
   const auth = getAuth(app);
@@ -22,6 +25,8 @@ function App() {
   const [token, setToken] = useState("");
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
+  const [userId, setUserId] = useState("");
+  const [admin, setAdmin] = useState(false);
 
   useEffect(() => {
     // 로그인한 사용자 가져오기
@@ -31,11 +36,17 @@ function App() {
         let email = user.email;
         setEmail(email);
         setName(user.displayName);
+        setUserId(
+          email.includes("sdh20") ? email.substr(0, 11) : email.substr(0, 9)
+        );
         // 학교 계정이 아니면 다시 로그인
         if (!email.includes("@sdh.hs.kr")) {
           alert("학교계정으로만 로그인 가능합니다.");
           signOut(auth);
           return;
+        }
+        if (email == "sdh2020040@sdh.hs.kr" || email == "shinem@sdh.hs.kr") {
+          setAdmin(true);
         }
 
         // 알림 토큰 저장
@@ -84,7 +95,7 @@ function App() {
         signInWithRedirect(auth, provider);
       }
     });
-  }, [auth]);
+  }, [auth, messaging]);
 
   // 포그라운드일 때 알림이 오면
   onMessage(messaging, (payload) => {
@@ -97,9 +108,9 @@ function App() {
         body: payload.data.message,
       });
 
-      // notification.onclick = function () {
-      //     window.open('http://google.com');
-      // };
+      notification.onclick = function () {
+        window.open("http://nsm0924.github.io/dont-sick-react/");
+      };
     }
   });
 
@@ -159,10 +170,6 @@ function App() {
 
   // 알림 받기에 등록한 사람들에게 알림 보내기
   const sendToTopic = (msg, topic) => {
-    let body = {
-      to: `/topics/${topic}`,
-      data: msg,
-    };
     fetch(`https://fcm.googleapis.com/fcm/send`, {
       method: "POST",
       headers: new Headers({
@@ -187,32 +194,33 @@ function App() {
   };
 
   const database = getDatabase();
-  let on_off_db = ref(database, "on_off");
-  const [on_off_data, set_on_off_data] = useState("");
-  const [isChecked, setIsChecked] = useState(false);
-  const on_off_db_data = useCallback(() => {
-    onValue(on_off_db, (snapshot) => {
-      const data = snapshot.val();
-      console.log(data);
-      set_on_off_data(data);
-      setIsChecked(data == "ON");
-    });
-  }, []);
-  useEffect(() => {
-    on_off_db_data();
-  }, [on_off_db_data]);
-
-  const checkedHandler = () => {
-    setIsChecked(!isChecked);
-    set(on_off_db, !isChecked ? "ON" : "OFF");
-    if (!isChecked) {
-      sendToTopic({ message: "보건실 ON🟢" }, "notice");
-    } else {
-      sendToTopic({ message: "보건실 OFF🔴" }, "notice");
-    }
-  };
 
   function HomePage() {
+    let on_off_db = ref(database, "on_off");
+    const [on_off_data, set_on_off_data] = useState("");
+    const [isChecked, setIsChecked] = useState(false);
+    const on_off_db_data = useCallback(() => {
+      onValue(on_off_db, (snapshot) => {
+        const data = snapshot.val();
+        console.log(data);
+        set_on_off_data(data);
+        setIsChecked(data == "ON");
+      });
+    }, [on_off_db]);
+    useEffect(() => {
+      on_off_db_data();
+    }, [on_off_db_data]);
+
+    const checkedHandler = () => {
+      setIsChecked(!isChecked);
+      set(on_off_db, !isChecked ? "ON" : "OFF");
+      if (!isChecked) {
+        sendToTopic({ message: "보건실 ON🟢" }, "notice");
+      } else {
+        sendToTopic({ message: "보건실 OFF🔴" }, "notice");
+      }
+    };
+
     return (
       <div>
         <nav className="menu">
@@ -236,15 +244,19 @@ function App() {
             <h2 id="text" style={{ marginBottom: "70px" }}>
               보건실 현재 {on_off_data}
             </h2>
-            <label className="switch-button" style={{ marginBottom: "50px" }}>
-              <input
-                checked={isChecked}
-                onChange={checkedHandler}
-                type="checkbox"
-                id="on_off_btn"
-              />
-              <span className="onoff-switch"></span>
-            </label>
+            {admin ? (
+              <label className="switch-button" style={{ marginBottom: "50px" }}>
+                <input
+                  checked={isChecked}
+                  onChange={checkedHandler}
+                  type="checkbox"
+                  id="on_off_btn"
+                />
+                <span className="onoff-switch"></span>
+              </label>
+            ) : (
+              <div></div>
+            )}
             <p>
               코로나 의심증상: 발열, 권태감, 기침, 호흡곤란 및 폐렴 등 나타남.
               <br />그 외 가래, 인후통, 두통, 객혈과 오심, 설사 등도 나타남.
@@ -256,35 +268,30 @@ function App() {
     );
   }
 
-  let userId = email.includes("sdh20")
-    ? email.substr(0, 11)
-    : email.substr(0, 9);
-  let notice_db = ref(database, `user/${userId}/notice`);
-  const [notice_data, set_notice_data] = useState("");
-  const [isChecked2, setIsChecked2] = useState(false);
-  const notice_db_data = useCallback(() => {
-    onValue(notice_db, (snapshot) => {
-      const data = snapshot.val();
-      console.log(data);
-      set_notice_data(data);
-      setIsChecked2(data == "true");
-    });
-  }, []);
-  useEffect(() => {
-    notice_db_data();
-  }, [notice_db_data]);
-
-  const checkedHandler2 = () => {
-    setIsChecked2(!isChecked2);
-    set(notice_db, !isChecked2 ? "true" : "false");
-    if (!isChecked2) {
-      subscribeTokenToTopic(token, "notice");
-    } else {
-      unsubscribeTokenToTopic(token, "notice");
-    }
-  };
-
   function SettingPage() {
+    let notice_db = ref(database, `user/${userId}/notice`);
+    const [isChecked2, setIsChecked2] = useState(false);
+    const notice_db_data = useCallback(() => {
+      onValue(notice_db, (snapshot) => {
+        const data = snapshot.val();
+        console.log(data);
+        setIsChecked2(data == "true");
+      });
+    }, [notice_db]);
+    useEffect(() => {
+      notice_db_data();
+    }, [notice_db_data]);
+
+    const checkedHandler2 = () => {
+      setIsChecked2(!isChecked2);
+      set(notice_db, !isChecked2 ? "true" : "false");
+      if (!isChecked2) {
+        subscribeTokenToTopic(token, "notice");
+      } else {
+        unsubscribeTokenToTopic(token, "notice");
+      }
+    };
+
     const logout = () => {
       signOut(auth);
     };
@@ -331,6 +338,91 @@ function App() {
     );
   }
 
+  function CheckPaperPage() {
+    const [checkPaper_data, setCheckPaper_data] = useState([]);
+    const checkPaper_db = getFirestore();
+    const checkPaper_db_data = useCallback(async () => {
+      let postData = [];
+      try {
+        const querySnapshot = await getDocs(collection(checkPaper_db, userId));
+        querySnapshot.forEach((doc) => {
+          console.log(`${doc.id} => ${doc.data()}`);
+          postData.push({ post: doc.data(), id: doc.id });
+        });
+        setCheckPaper_data((prevPosts) => prevPosts.concat(postData));
+      } catch {}
+    }, [checkPaper_db]);
+    useEffect(() => {
+      checkPaper_db_data();
+    }, [checkPaper_db_data]);
+
+    function modal(grade, classResult, nameResult, time, symptom, date) {
+      document.querySelector(".modal_wrap").style.display = "flex";
+      document.querySelector(".black_bg").style.display = "block";
+      document.getElementById(
+        "modal_text"
+      ).innerHTML = `<p>${grade}학년 ${classResult}반 ${nameResult}</p>
+      <p>위 학생은 보건실에 ${time} ${symptom} 증상으로 다녀감을 확인 합니다.</p>
+      <p>${date}</p><p>보건교사 문서현</p>`;
+      function offClick() {
+        document.querySelector(".modal_wrap").style.display = "none";
+        document.querySelector(".black_bg").style.display = "none";
+      }
+      document
+        .querySelector(".modal_close")
+        .addEventListener("click", offClick);
+    }
+
+    return (
+      <div>
+        <nav className="menu">
+          <ul>
+            <li>
+              <Link to="/dont-sick-react/checkPaper">보건증</Link>
+            </li>
+            <li>
+              <Link to="/dont-sick-react/">홈</Link>
+            </li>
+            <li>
+              <Link to="/dont-sick-react/setting">설정</Link>
+            </li>
+          </ul>
+        </nav>
+        <div className="container">
+          <div className="box">
+            <img src="./images/logo.png" alt="" />
+            <hr style={{ width: "100%", marginBottom: "50px" }} />
+            <h2 style={{ marginBottom: "30px" }}>보건실입실확인증</h2>
+            <ul className="mylist">
+              {checkPaper_data.map((post) => (
+                <li
+                  key={post.id}
+                  onClick={() => {
+                    modal(
+                      post.post.grade,
+                      post.post.classResult,
+                      post.post.name,
+                      post.post.time,
+                      post.post.symptom,
+                      post.post.date
+                    );
+                  }}
+                >
+                  {post.id}
+                </li>
+              ))}
+            </ul>
+            <div className="black_bg"></div>
+            <div className="modal_wrap">
+              <div className="modal_close"></div>
+              <div id="modal_text"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div
       style={{
@@ -342,6 +434,7 @@ function App() {
     >
       <Route path="/dont-sick-react/" exact component={HomePage} />
       <Route path="/dont-sick-react/setting" component={SettingPage} />
+      <Route path="/dont-sick-react/checkpaper" component={CheckPaperPage} />
     </div>
   );
 }
