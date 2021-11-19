@@ -7,13 +7,12 @@ import {
   onAuthStateChanged,
 } from "firebase/auth";
 import { getMessaging, getToken, onMessage } from "firebase/messaging";
-import { app, swRegistration } from "./firebase";
+import { app } from "./firebase";
 import { useEffect, useState } from "react";
 
 function App() {
   const auth = getAuth(app);
   const messaging = getMessaging();
-  const [number, setNumber] = useState("");
   const [name, setName] = useState("");
   const [token, setToken] = useState("");
 
@@ -29,37 +28,42 @@ function App() {
           signOut(auth);
           return;
         }
-        // 학번 이름 저장
-        else if (email.includes("sdh19")) {
-          setNumber(`3${email.substr(5, 4)}`);
-        } else if (email.includes("sdh20")) {
-          setNumber(`2${email.substr(7, 4)}`);
-        } else if (email.includes("sdh21")) {
-          setNumber(`1${email.substr(5, 4)}`);
-        }
         setName(user.displayName);
 
         // 알림 토큰 저장
-        getToken(messaging, {
-          serviceWorkerRegistration: swRegistration,
-          vapidKey:
-            "BLnmZ7MoMERjyVHv4b791C7j1_-xqcVi9aCrVWDDFovZSGDgK9FROae3J8Q7AWqTJwbQDc2Dk4LrU0zAEUVqfVQ",
-        })
-          .then((currentToken) => {
-            if (currentToken) {
-              console.log(currentToken);
-              setToken(currentToken);
-            } else {
-              console.log(
-                "No registration token available. Request permission to generate one."
-              );
-              alert("알림 권한을 허용해주세요.");
-            }
-          })
-          .catch((err) => {
-            console.log("An error occurred while retrieving token. ", err);
-            alert("알림 권한을 허용해주세요.");
-          });
+        if (navigator.serviceWorker) {
+          navigator.serviceWorker
+            .register("/dont-sick-react/firebase-messaging-sw.js")
+            .then(function (reg) {
+              console.log("서비스워커 등록성공 :", reg);
+              getToken(messaging, {
+                serviceWorkerRegistration: reg,
+                vapidKey:
+                  "BLnmZ7MoMERjyVHv4b791C7j1_-xqcVi9aCrVWDDFovZSGDgK9FROae3J8Q7AWqTJwbQDc2Dk4LrU0zAEUVqfVQ",
+              })
+                .then((currentToken) => {
+                  if (currentToken) {
+                    console.log(currentToken);
+                    setToken(currentToken);
+                  } else {
+                    console.log(
+                      "No registration token available. Request permission to generate one."
+                    );
+                    alert("알림 권한을 허용해주세요.");
+                  }
+                })
+                .catch((err) => {
+                  console.log(
+                    "An error occurred while retrieving token. ",
+                    err
+                  );
+                  alert("알림 권한을 허용해주세요.");
+                });
+            })
+            .catch(function (error) {
+              console.log("서비스워커 등록실패 :", error);
+            });
+        }
       }
       // 로그인이 안되어있으면 로그인 페이지로 이동
       else {
@@ -80,8 +84,19 @@ function App() {
 
   // 포그라운드일 때 알림이 오면
   onMessage(messaging, (payload) => {
-    console.log(payload);
-    alert(`${payload.notification.title}\n${payload.notification.body}`);
+    console.log("Message received. ", payload);
+    if (Notification.permission !== "granted") {
+      alert("notification is disabled");
+    } else {
+      var notification = new Notification("아프지말고", {
+        icon: "images/logo.png",
+        body: payload.data.message,
+      });
+
+      // notification.onclick = function () {
+      //     window.open('http://google.com');
+      // };
+    }
   });
 
   // 알림 받기 등록
@@ -170,14 +185,12 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <p>
-          {number} {name}
-        </p>
+        <p>{name}</p>
         <p className="App-link" onClick={logout}>
           logout
         </p>
-        <p onClick={() => subscribeTokenToTopic(token, "test")}>알림 받기</p>
-        <p onClick={() => unsubscribeTokenToTopic(token, "test")}>
+        <p onClick={() => subscribeTokenToTopic(token, "notice")}>알림 받기</p>
+        <p onClick={() => unsubscribeTokenToTopic(token, "notice")}>
           알림 안받기
         </p>
         <p
