@@ -107,10 +107,6 @@ function App() {
         icon: "./images/logo.png",
         body: payload.data.message,
       });
-
-      notification.onclick = function () {
-        window.open("http://nsm0924.github.io/dont-sick-react/");
-      };
     }
   });
 
