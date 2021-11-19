@@ -1,0 +1,85 @@
+h2 {
+  margin-bottom: 20px;
+}
+
+p,
+button {
+  font-weight: bold;
+}
+
+button {
+  border-radius: 10px;
+  border: aqua;
+  width: 7.5vw;
+  background-color: aqua;
+  height: 5.25vh;
+}
+
+.switch-button {
+  position: relative;
+  display: inline-block;
+  width: 55px;
+  height: 30px;
+}
+
+.switch-button input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.onoff-switch {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 20px;
+  background-color: #ccc;
+  box-shadow: inset 1px 5px 1px #999;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
+}
+
+.onoff-switch:before {
+  position: absolute;
+  content: "";
+  height: 22px;
+  width: 22px;
+  left: 4px;
+  bottom: 4px;
+  background-color: #fff;
+  -webkit-transition: 0.5s;
+  transition: 0.4s;
+  border-radius: 20px;
+}
+
+.switch-button input:checked + .onoff-switch {
+  background-color: chartreuse;
+  box-shadow: inset 1px 5px 1px rgb(103, 206, 0);
+}
+
+.switch-button input:checked + .onoff-switch:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}
+.logout_btn {
+  font-weight: bold;
+  width: 24vh;
+  height: 45px;
+  background-color: white;
+  border: 1px solid gray;
+  transition: 0.3s;
+  cursor: pointer;
+  border-radius: 5px;
+}
+.logout_btn:hover {
+  background-color: #4596ff;
+  color: #ffffff;
+}
+.logout_btn:active {
+  background-color: #006eff;
+  color: #ffffff;
+}
