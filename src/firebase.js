@@ -14,15 +14,5 @@ const firebaseConfig = {
   appId: "1:713607862724:web:5ada0cc3cdaa6370662c91",
 };
 
-export const swRegistration = async () => {
-  try {
-    await navigator.serviceWorker.register(
-      "/dont-sick-react/firebase-messaging-sw.js"
-    );
-  } catch (error) {
-    console.error(error);
-  }
-};
-
 // Initialize Firebase
 export const app = initializeApp(firebaseConfig);
