@@ -241,7 +241,7 @@ function App() {
               <Link to="/dont-sick-react/checkPaper">보건증</Link>
             </li>
             <li>
-              <Link to="/dont-sick-react">홈</Link>
+              <Link to="/dont-sick-react/">홈</Link>
             </li>
             <li>
               <Link to="/dont-sick-react/setting">설정</Link>
@@ -250,7 +250,7 @@ function App() {
         </nav>
         <div className="container">
           <div className="box">
-            <img src="dont-sick-react/images/logo.png" alt="logo" />
+            <img src="images/logo.png" alt="logo" />
             <hr style={{ width: "100%", marginBottom: "50px" }} />
             <div className={`curcle ${on_off_data}`}></div>
             <h2 id="text" style={{ marginBottom: "70px" }}>
@@ -325,7 +325,7 @@ function App() {
                 <Link to="/dont-sick-react/checkPaper">보건증</Link>
               </li>
               <li>
-                <Link to="/dont-sick-react">홈</Link>
+                <Link to="/dont-sick-react/">홈</Link>
               </li>
               <li>
                 <Link to="/dont-sick-react/setting">설정</Link>
@@ -380,7 +380,7 @@ function App() {
               <Link to="/dont-sick-react/checkPaper">보건증</Link>
             </li>
             <li>
-              <Link to="/dont-sick-react">홈</Link>
+              <Link to="/dont-sick-react/">홈</Link>
             </li>
             <li>
               <Link to="/dont-sick-react/setting">설정</Link>
