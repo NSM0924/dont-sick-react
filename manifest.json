@@ -1,21 +1,21 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "아프지말고",
+  "name": "서울디지텍고등학교 보건실 Web",
   "icons": [
     {
-      "src": "favicon.ico",
+      "src": "logo128.ico",
       "sizes": "64x64 32x32 24x24 16x16",
       "type": "image/x-icon"
     },
     {
-      "src": "logo192.png",
+      "src": "logo128.png",
       "type": "image/png",
-      "sizes": "192x192"
+      "sizes": "128x128"
     },
     {
-      "src": "logo512.png",
+      "src": "logo800.png",
       "type": "image/png",
-      "sizes": "512x512"
+      "sizes": "800x800"
     }
   ],
   "start_url": ".",
