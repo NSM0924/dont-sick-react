@@ -45,7 +45,7 @@ function App() {
           signOut(auth);
           return;
         }
-        if (email == "sdh2020040@sdh.hs.kr" || email == "shinem@sdh.hs.kr") {
+        if (email == "sdh20200405@sdh.hs.kr" || email == "shinem@sdh.hs.kr") {
           setAdmin(true);
         }
 
