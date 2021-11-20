@@ -15,3 +15,18 @@ firebase.initializeApp({
 // Retrieve an instance of Firebase Messaging so that it can handle background
 // messages.
 const messaging = firebase.messaging();
+messaging.onBackgroundMessage((payload) => {
+  console.log("Message received. ", payload);
+  self.registration.showNotification("아프지말고", {
+    icon: "./images/logo.png",
+    body: payload.data.message,
+  });
+  // if (Notification.permission !== "granted") {
+  //   alert("notification is disabled");
+  // } else {
+  //   var notification = new Notification("아프지말고", {
+  //     icon: "./images/logo.png",
+  //     body: payload.data.message,
+  //   });
+  // }
+});

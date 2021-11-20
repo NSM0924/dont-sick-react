@@ -188,8 +188,24 @@ function App() {
         console.error(error);
       });
   };
-
   const database = getDatabase();
+  let notice_db = ref(database, `user/${userId}/notice`);
+  const [isChecked2, setIsChecked2] = useState(false);
+  const notice_db_data = useCallback(() => {
+    onValue(notice_db, (snapshot) => {
+      const data = snapshot.val();
+      console.log(data);
+      setIsChecked2(data == "true");
+      if (data == "true") {
+        subscribeTokenToTopic(token, "notice");
+      } else {
+        unsubscribeTokenToTopic(token, "notice");
+      }
+    });
+  }, [notice_db]);
+  useEffect(() => {
+    notice_db_data();
+  }, [notice_db_data]);
 
   function HomePage() {
     let on_off_db = ref(database, "on_off");
@@ -265,27 +281,14 @@ function App() {
   }
 
   function SettingPage() {
-    let notice_db = ref(database, `user/${userId}/notice`);
-    const [isChecked2, setIsChecked2] = useState(false);
-    const notice_db_data = useCallback(() => {
-      onValue(notice_db, (snapshot) => {
-        const data = snapshot.val();
-        console.log(data);
-        setIsChecked2(data == "true");
-      });
-    }, [notice_db]);
-    useEffect(() => {
-      notice_db_data();
-    }, [notice_db_data]);
-
     const checkedHandler2 = () => {
       setIsChecked2(!isChecked2);
       set(notice_db, !isChecked2 ? "true" : "false");
-      if (!isChecked2) {
-        subscribeTokenToTopic(token, "notice");
-      } else {
-        unsubscribeTokenToTopic(token, "notice");
-      }
+      // if (!isChecked2) {
+      //   subscribeTokenToTopic(token, "notice");
+      // } else {
+      //   unsubscribeTokenToTopic(token, "notice");
+      // }
     };
 
     const logout = () => {

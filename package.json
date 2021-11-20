@@ -1,5 +1,6 @@
 {
   "homepage": "https://nsm0924.github.io/dont-sick-react/",
+  "type": "module",
   "name": "dont_sick_test",
   "version": "0.1.0",
   "private": true,
