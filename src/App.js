@@ -7,7 +7,15 @@ import {
   onAuthStateChanged,
 } from "firebase/auth";
 import { getDatabase, onValue, ref, set } from "firebase/database";
-import { collection, getDocs, getFirestore } from "firebase/firestore";
+import {
+  collection,
+  deleteDoc,
+  doc,
+  getDoc,
+  getDocs,
+  getFirestore,
+  setDoc,
+} from "firebase/firestore";
 import { getMessaging, getToken, onMessage } from "firebase/messaging";
 import { app } from "./firebase";
 import { useCallback, useEffect, useState } from "react";
@@ -195,16 +203,22 @@ function App() {
     onValue(notice_db, (snapshot) => {
       const data = snapshot.val();
       console.log(data);
-      setIsChecked2(data == "true");
-      if (data == "true") {
-        subscribeTokenToTopic(token, "notice");
+      if (!data) {
+        set(notice_db, "true");
       } else {
-        unsubscribeTokenToTopic(token, "notice");
+        setIsChecked2(data == "true");
+        if (data == "true") {
+          subscribeTokenToTopic(token, "notice");
+        } else {
+          unsubscribeTokenToTopic(token, "notice");
+        }
       }
     });
   }, [notice_db]);
   useEffect(() => {
-    notice_db_data();
+    if (!userId == "") {
+      notice_db_data();
+    }
   }, [notice_db_data]);
 
   function HomePage() {
@@ -291,7 +305,8 @@ function App() {
       // }
     };
 
-    const logout = () => {
+    const logout = async () => {
+      await unsubscribeTokenToTopic(token, "notice");
       signOut(auth);
     };
     return (
@@ -337,9 +352,9 @@ function App() {
     );
   }
 
+  const checkPaper_db = getFirestore();
   function CheckPaperPage() {
     const [checkPaper_data, setCheckPaper_data] = useState([]);
-    const checkPaper_db = getFirestore();
     const checkPaper_db_data = useCallback(async () => {
       let postData = [];
       try {
@@ -422,6 +437,318 @@ function App() {
     );
   }
 
+  function AdminCheckPaperPage() {
+    const [idInput, setIdInput] = useState("");
+    const [gradeInput, setGradeInput] = useState("");
+    const [classInput, setClassInput] = useState("");
+    const [nameInput, setNameInput] = useState("");
+    const [timeInput, setTimeInput] = useState("");
+    const [symptomInput, setSymptomInput] = useState("");
+    async function postCheckPaper() {
+      if (
+        idInput == "" ||
+        gradeInput == "" ||
+        classInput == "" ||
+        nameInput == "" ||
+        timeInput == "" ||
+        symptomInput == ""
+      ) {
+        alert("빈탄을 모두 채워주세요.");
+      } else {
+        let date = new Date();
+        let year = date.getFullYear();
+        let month = ("0" + (1 + date.getMonth())).slice(-2);
+        let day = ("0" + date.getDate()).slice(-2);
+        let hour = date.getHours();
+
+        let fullDate = year + "-" + month + "-" + day + "-" + hour;
+        await setDoc(doc(checkPaper_db, idInput, fullDate), {
+          id: idInput,
+          grade: gradeInput,
+          classResult: classInput,
+          name: nameInput,
+          time: timeInput,
+          symptom: symptomInput,
+          date: fullDate,
+        }).then(async () => {
+          await setDoc(
+            doc(
+              checkPaper_db,
+              "check_paper",
+              fullDate + `_${gradeInput}-${classInput}_${nameInput}`
+            ),
+            {
+              id: idInput,
+              title: fullDate,
+            }
+          ).then(() => {
+            setIdInput("");
+            setGradeInput("");
+            setClassInput("");
+            setNameInput("");
+            setTimeInput("");
+            setSymptomInput("");
+            console.log("성공");
+          });
+        });
+      }
+    }
+    // const [checkPaper_data, setCheckPaper_data] = useState([]);
+    // const checkPaper_db = getFirestore();
+    // const checkPaper_db_data = useCallback(async () => {
+    //   let postData = [];
+    //   try {
+    //     const querySnapshot = await getDocs(collection(checkPaper_db, userId));
+    //     querySnapshot.forEach((doc) => {
+    //       console.log(`${doc.id} => ${doc.data()}`);
+    //       postData.push({ post: doc.data(), id: doc.id });
+    //     });
+    //     setCheckPaper_data((prevPosts) => prevPosts.concat(postData));
+    //   } catch {}
+    // }, [checkPaper_db]);
+    // useEffect(() => {
+    //   checkPaper_db_data();
+    // }, [checkPaper_db_data]);
+
+    // function modal(grade, classResult, nameResult, time, symptom, date) {
+    //   document.querySelector(".modal_wrap").style.display = "flex";
+    //   document.querySelector(".black_bg").style.display = "block";
+    //   document.getElementById(
+    //     "modal_text"
+    //   ).innerHTML = `<p>${grade}학년 ${classResult}반 ${nameResult}</p>
+    //   <p>위 학생은 보건실에 ${time} ${symptom} 증상으로 다녀감을 확인 합니다.</p>
+    //   <p>${date}</p><p>보건교사 문서현</p>`;
+    //   function offClick() {
+    //     document.querySelector(".modal_wrap").style.display = "none";
+    //     document.querySelector(".black_bg").style.display = "none";
+    //   }
+    //   document
+    //     .querySelector(".modal_close")
+    //     .addEventListener("click", offClick);
+    // }
+
+    return (
+      <div>
+        <nav className="menu">
+          <ul>
+            <li>
+              <Link to="/dont-sick-react/checkPaper">보건증</Link>
+            </li>
+            <li>
+              <Link to="/dont-sick-react/">홈</Link>
+            </li>
+            <li>
+              <Link to="/dont-sick-react/setting">설정</Link>
+            </li>
+          </ul>
+        </nav>
+        <div className="container">
+          <div className="box">
+            <img src="./images/logo.png" alt="" />
+            <hr style={{ width: "100%", marginBottom: "50px" }} />
+            <h2 style={{ marginBottom: "30px" }}>보건실입실확인증</h2>
+            <div>
+              학생ID{" "}
+              <input
+                value={idInput}
+                onChange={(e) => {
+                  setIdInput(e.target.value);
+                }}
+                type="text"
+                placeholder="ex) sdh20200405"
+              />
+            </div>
+            <div>
+              학년{" "}
+              <input
+                onChange={(e) => {
+                  setGradeInput(e.target.value);
+                }}
+                value={gradeInput}
+                type="number"
+                min="1"
+                max="3"
+              />
+            </div>
+            <div>
+              반{" "}
+              <input
+                onChange={(e) => {
+                  setClassInput(e.target.value);
+                }}
+                value={classInput}
+                type="number"
+                min="1"
+                max="4"
+              />
+            </div>
+            <div>
+              이름{" "}
+              <input
+                onChange={(e) => {
+                  setNameInput(e.target.value);
+                }}
+                value={nameInput}
+                type="text"
+              />
+            </div>
+            <div>
+              시간{" "}
+              <input
+                onChange={(e) => {
+                  setTimeInput(e.target.value);
+                }}
+                value={timeInput}
+                type="text"
+                placeholder="ex) 1교시 / 9시30분"
+              />
+            </div>
+            <div>
+              증상{" "}
+              <input
+                onChange={(e) => {
+                  setSymptomInput(e.target.value);
+                }}
+                value={symptomInput}
+                type="text"
+              />
+            </div>
+            <button
+              style={{ margin: "10px 0" }}
+              onClick={postCheckPaper}
+              className="submitBtn"
+            >
+              작성
+            </button>
+            <Link to="/dont-sick-react/delete">
+              <button className="submitBtn">삭제</button>
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  function DeleteCheckPaperPage() {
+    const [checkPaper_data, setCheckPaper_data] = useState([]);
+    const checkPaper_db_data = useCallback(async () => {
+      let postData = [];
+      try {
+        const querySnapshot = await getDocs(
+          collection(checkPaper_db, "check_paper")
+        );
+        querySnapshot.forEach((doc) => {
+          console.log(`${doc.id} => ${doc.data()}`);
+          postData.push({
+            title: doc.data().title,
+            id: doc.data().id,
+            dataId: doc.id,
+          });
+        });
+        setCheckPaper_data((prevPosts) => prevPosts.concat(postData));
+      } catch {}
+    }, [checkPaper_db]);
+    useEffect(() => {
+      checkPaper_db_data();
+    }, [checkPaper_db_data]);
+
+    async function modal(id, title, dataId) {
+      document.querySelector(".modal_wrap").style.display = "flex";
+      document.querySelector(".black_bg").style.display = "block";
+      const modalSnapshot = await getDoc(doc(checkPaper_db, id, title));
+      try {
+        document.getElementById("modal_text").innerHTML = `<p>${
+          modalSnapshot.data().grade
+        }학년 ${modalSnapshot.data().classResult}반 ${
+          modalSnapshot.data().name
+        }</p>
+          <p>위 학생은 보건실에 ${modalSnapshot.data().time} ${
+          modalSnapshot.data().symptom
+        } 증상으로 다녀감을 확인 합니다.</p>
+          <p>${modalSnapshot.data().date}</p><p>보건교사 문서현</p>`;
+      } catch (e) {
+        if (e instanceof TypeError) {
+          alert("학생ID 오류");
+        }
+      }
+      function offClick() {
+        document.querySelector(".modal_wrap").style.display = "none";
+        document.querySelector(".black_bg").style.display = "none";
+      }
+      async function deleteData(id, title, dataId) {
+        try {
+          await deleteDoc(doc(checkPaper_db, id, title));
+          await deleteDoc(doc(checkPaper_db, "check_paper", dataId)).then(
+            () => {
+              window.location.reload();
+            }
+          );
+        } catch {
+          console.log("실패");
+        }
+      }
+      document
+        .querySelector(".modal_close")
+        .addEventListener("click", offClick);
+      document.getElementById("deleteBtn").addEventListener("clcik", () => {
+        deleteData(id, title, dataId);
+      });
+    }
+
+    return (
+      <div>
+        <nav className="menu">
+          <ul>
+            <li>
+              <Link to="/dont-sick-react/checkPaper">보건증</Link>
+            </li>
+            <li>
+              <Link to="/dont-sick-react/">홈</Link>
+            </li>
+            <li>
+              <Link to="/dont-sick-react/setting">설정</Link>
+            </li>
+          </ul>
+        </nav>
+        <div className="container">
+          <div className="box">
+            <img src="./images/logo.png" alt="" />
+            <hr style={{ width: "100%", marginBottom: "50px" }} />
+            <h2 style={{ marginBottom: "30px" }}>보건실입실확인증</h2>
+            <ul className="mylist">
+              {checkPaper_data.map((post) => (
+                <li
+                  key={post.dataId}
+                  onClick={() => {
+                    modal(post.id, post.title, post.dataId);
+                  }}
+                >
+                  {post.dataId}
+                </li>
+              ))}
+            </ul>
+            <div className="black_bg"></div>
+            <div className="modal_wrap">
+              <div className="modal_close"></div>
+              <div id="modal_text"></div>
+              <div
+                id="deleteBtn"
+                style={{
+                  position: "absolute",
+                  right: "10px",
+                  bottom: "10px",
+                  cursor: "pointer",
+                }}
+              >
+                삭제
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div
       style={{
@@ -433,7 +760,20 @@ function App() {
     >
       <Route path="/dont-sick-react/" exact component={HomePage} />
       <Route path="/dont-sick-react/setting" component={SettingPage} />
-      <Route path="/dont-sick-react/checkpaper" component={CheckPaperPage} />
+      <Route
+        path="/dont-sick-react/checkpaper"
+        component={admin ? AdminCheckPaperPage : CheckPaperPage}
+      />
+      {admin ? (
+        <Route
+          path="/dont-sick-react/delete"
+          component={DeleteCheckPaperPage}
+        />
+      ) : (
+        () => {
+          window.location.href = "/dont-sick-react/";
+        }
+      )}
     </div>
   );
 }

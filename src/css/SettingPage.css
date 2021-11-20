@@ -7,12 +7,23 @@ button {
   font-weight: bold;
 }
 
-button {
-  border-radius: 10px;
-  border: aqua;
-  width: 7.5vw;
-  background-color: aqua;
-  height: 5.25vh;
+.submitBtn {
+  font-weight: bold;
+  width: 24vh;
+  height: 45px;
+  background-color: white;
+  border: 1px solid gray;
+  transition: 0.3s;
+  cursor: pointer;
+  border-radius: 5px;
+}
+.submitBtn:hover {
+  background-color: #4596ff;
+  color: #ffffff;
+}
+.submitBtn:active {
+  background-color: #006eff;
+  color: #ffffff;
 }
 
 .switch-button {

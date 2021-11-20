@@ -17,3 +17,10 @@ ul.mylist li:hover {
   background-color: #66a8ff;
   color: #ffffff;
 }
+
+input {
+  border: 1px solid #4596ff;
+  padding: 5px;
+  border-radius: 5px;
+  margin: 3px 0;
+}
