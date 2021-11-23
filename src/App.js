@@ -462,6 +462,7 @@ function App() {
         let hour = date.getHours();
 
         let fullDate = year + "-" + month + "-" + day + "-" + hour;
+        let postDate = year + "년 " + month + "월 " + day + "일";
         await setDoc(doc(checkPaper_db, idInput, fullDate), {
           id: idInput,
           grade: gradeInput,
@@ -469,7 +470,7 @@ function App() {
           name: nameInput,
           time: timeInput,
           symptom: symptomInput,
-          date: fullDate,
+          date: postDate,
         }).then(async () => {
           await setDoc(
             doc(
